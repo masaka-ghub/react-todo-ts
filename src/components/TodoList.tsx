@@ -1,6 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const TodoList = () => {
+  // 入力されたテキストを管理
+  const [input, setInput] = useState('');
+  // Todoリストを管理
+  const [todoItems, setTodoItems] = useState([]);
+
   return (
     <>
       <div className="list-container" />
