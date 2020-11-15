@@ -19,3 +19,11 @@ code {
   height: 480px;
   background-color: #fff;
 }
+
+.todo-item {
+  text-align: left;
+  border-bottom: 1px solid #53bdff;
+  padding: 15px 5px;
+  font-size: 1.3em;
+  color: #2f4f4f;
+}
