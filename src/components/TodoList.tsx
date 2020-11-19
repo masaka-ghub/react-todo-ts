@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Timer from "./Timer";
 import TodoItem from "./TodoItem";
 
 const TodoList = () => {
@@ -8,6 +9,8 @@ const TodoList = () => {
   const [todoItems, setTodoItems] = useState<string[]>([]);
   // 件数表示のメッセージ
   const [message, setMessage] = useState("初期メッセージ");
+
+  const [showTimer, setShowTimer] = useState(true);
 
   useEffect(() => {
     setMessage(`TODO LIST: ${todoItems.length}件`);
@@ -24,6 +27,8 @@ const TodoList = () => {
 
   return (
     <>
+      <button onClick={() => setShowTimer(!showTimer)}>timer表示</button>
+      {showTimer && <Timer />}
       <p>{message}</p>
       <div className="list-container">
         {todoItems.map((item, i) => (
