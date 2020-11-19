@@ -12,6 +12,12 @@ const Timer = () => {
       setNow(current.toLocaleString());
       console.log(`${id}:timer reflesh end`);
     }, 10000);
+
+    // unmount時に実行されるcleanup関数
+    return () => {
+      console.log(`clear setInterval - id:${id}`);
+      clearInterval(id);
+    };
   }, []);
 
   return <div>{now}</div>;
