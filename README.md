@@ -2,7 +2,6 @@
 
 ### 1.React プロジェクトの作成
 
-<<<<<<< HEAD
 まず、React のプロジェクトを作成します。create-react-app を使います。  
 `--typescript`オプションをつけることで typescript プロジェクトも作成することができる様になっています。
 
@@ -22,16 +21,6 @@ yarn start
 ```
 
 これで react のサンプルプロジェクトが起動することと思います。
-=======
-まず、React のプロジェクトを作成します。create-react-app を使います。
-
-```
-npx create-react-app <プロジェクト名>
-npx create-react-app todo-list
-```
-
-・ここまでのコミット-> `d5aa714bfb946dcd0846458c0fb4bf2784d4a127`
->>>>>>> 3963a63... 5.までのREADME
 
 ### 2.Todo リストの親コンポーネント作成
 
@@ -39,12 +28,8 @@ npx create-react-app todo-list
 `/src/components/`ディレクトリ以下にコンポーネントファイルを作成します。
 
 ```
-<<<<<<< HEAD
 // src/components/TodoList.tsx
 
-=======
-// src/components/TodoList.js
->>>>>>> 3963a63... 5.までのREADME
 import React from 'react';
 
 const TodoList = () => {
@@ -78,17 +63,11 @@ export default TodoList;
 ```
 
 これで TODO リストの親コンポーネントが作成できました。
-<<<<<<< HEAD
 App.tsx に Todo リストコンポーネントを追加し、表示させてみます。
 
 ```
 // App.tsx
 
-=======
-App.js に Todo リストコンポーネントを追加し、表示させてみます。
-
-```
->>>>>>> 3963a63... 5.までのREADME
 import React from 'react';
 import './App.css';
 import TodoList from './components/TodoList';
@@ -108,24 +87,14 @@ export default App;
 とりあえず外枠とボタンは表示されました。  
 ボタンを押してもアラート表示がされるだけです。
 
-<<<<<<< HEAD
-・ここまでのコミットに同期する->`git reset --hard 7a5b9dcfe07250913026a4e92c454bce7d2c080b`
-=======
-・ここまでのコミット->`6ec35c37c754b314cc4b44e32d2f2694bcc96980`
->>>>>>> 3963a63... 5.までのREADME
+・ここまでのコミットに同期する->`git reset --hard 5ebf6741eb7a8092f8fdd71ca446e59ca46eb9cb`
 
 ### 3-1.useState で状態を管理する
 
 hooks の一つ、useState を使ってコンポーネントに状態を持たせます。  
-<<<<<<< HEAD
 TodoList に`inputの入力値`と、`Todoリスト`の二つの状態を定義します。
 
 [useState による定義](https://github.com/masaka-ghub/react-todo-ts/commit/085bf4ab7da3ec0d29cb94e921f931268c2fbebe)
-=======
-TodoList に input の入力値と、Todo リストの二つの値を定義します。
-
-[useState による定義](https://github.com/masaka-ghub/react-hooks-todo/commit/8071161a48bb66eeb2355258d718884bca55de65#diff-efaef22c970cf38cd94a7e2ec3c146f8L1-R7)
->>>>>>> 3963a63... 5.までのREADME
 
 ```
 // src/components/TodoList.tsx
@@ -138,44 +107,28 @@ TodoList に input の入力値と、Todo リストの二つの値を定義し�
 +  const [input, setInput] = useState('');
 +  // Todoリストを管理
 +  const [todoItems, setTodoItems] = useState([]);
+
+   return (
 ```
 
-<<<<<<< HEAD
 input と todoItems の二つの state と、それぞれの setter を useState を使用して定義しました。
-useState は変数と setter をまとめて配列で返します。汎用的な書式は以下の様になります。
-=======
-input と todoItems の二つの state と、それぞれの setter を useState を使用して定義しました。ここでは別々の値で定義していますが、オブジェクト型として一つにまとめる事もできます。
-
-`const [stateObject, setStateObject] = useState({hoge: '', fuga: {}})`...と言った感じです。  
-ただ、分けられるものは分けて定義した方が扱いやすいと思います。
-
-useState は変数と setter をまとめて配列で返します。汎用的な書式は
->>>>>>> 3963a63... 5.までのREADME
+useState は変数と setter をまとめて配列で返します。分割代入を利用して以下のような書式で使われます。
 
 ```
 const [state, setState] = useState(initialState);
 ```
 
-<<<<<<< HEAD
-input の初期値は\`\`, todoItems の初期値は[]として定義されました。初期値をセットする場合は useState に引数として渡します。  
-`useState('初期値')`
+input の初期値は`''`, todoItems の初期値は`[]`として定義されました。
 
 ここでは別々の値で定義していますが、オブジェクト型として一つにまとめる事もできます。
 
 `const [stateObject, setStateObject] = useState({hoge: '', fuga: {}})`...と言った感じです。  
-ただ、分けられるものは分けて定義した方が扱いやすいと思います。
+ただ、分けられるものは分けて定義した方が扱いやすいと思います。  
+後述しますが、複雑なstateを管理する場合は`useReducer`の利用を検討したほうが良いです。
 
 #### 3-2.setState で状態を変更する
 
 テキスト入力タグ(`<input type="text">`)で input の値を、button のクリックで todoItems の追加がされるようにしてみます。  
-=======
-です。input の初期値は\`\`, todoItems の初期値は[]として定義されました。初期値をセットする場合は useState に引数として渡します。  
-`useState('初期値')`
-
-#### 3-2.setState で状態を変更する
-
-テキスト入力で input の値を、button のクリックで todoItems の追加がされるようにしてみます。  
->>>>>>> 3963a63... 5.までのREADME
 まずはテキスト入力の値を state 側に反映させます。  
 useState で受け取った setter 関数を使用します。  
 加えて、input の値を別のタグに表示し、変更を確認してみましょう。
@@ -198,35 +151,29 @@ useState で受け取った setter 関数を使用します。
 
 した入力値が反映されていることが確認できました。
 
-<<<<<<< HEAD
 **hands on**
 
 - テキスト入力欄の上部に表示される文字列を、入力文字数に変更してください
 - 10 文字を超えた場合にのみ、入力文字数を表示してください
-=======
-・ここまでのコミット->`7714c8312d2bb7265ce759235b7f69e881ba164c`
->>>>>>> 3963a63... 5.までのREADME
 
 #### 3-3.setState で配列型の値を変更する
 
-次に、ボタンのクリックでに input 入力値を todo に追加できる様にします。
-ボタンの`onClick`に、配列で宣言された`todoItems`に input の値を追加する関数を割り当てます。
+次に、ボタンのクリックで input 入力値を todo に追加できる様にします。  
+ボタンの`onClick`に、配列で宣言された`todoItems`に input の値を追加する関数を割り当てます。  
+`todoItems`はstringのリストにするため、型の指定が必要です。  
+`useState`にジェネリクス型を追加します。
 
 ```
 // TodoList.tsx
 
-<<<<<<< HEAD
   // Todoリストを管理
 - const [todoItems, setTodoItems] = useState([]);
 + const [todoItems, setTodoItems] = useState<string[]>([]);
 
+...
 
-
-=======
->>>>>>> 3963a63... 5.までのREADME
 +  const addTodo = () => {
 +    todoItems.push(input);
-+    setTodoItems(todoItems);
 +  };
 +
    return (
@@ -243,22 +190,30 @@ useState で受け取った setter 関数を使用します。
 
 ```
 
-todoItems に追加し、set する処理を書きました。  
+todoItems に追加する処理を書きました。  
 **しかしこれは意図した通りに動きません。**
 
-useState に配列やオブジェクトを使用する場合、中の要素を変更してもコンポーネントは再描画されません。(state の参照先が前回と同じなため)
+useState に配列やオブジェクトを使用する場合、中の要素を変更してもコンポーネントは再描画されません。  
+また、`todoItems.push(input)`の後に
+```
+setTodoItems(todoItems)
+```
+としてもやはり動きません。(state の参照先が前回と同じなため)
 
-そのため、新しい配列やオブジェクトを setter に渡す必要があります。  
-コードを修正てみます。
+再描画させるためには新しい配列やオブジェクトを setter に渡す必要があります。  
+コードを修正します。
 
 ```
 // TodoList.tsx
 
    const addTodo = () => {
 -    todoItems.push(input);
--    setTodoItems(todoItems);
 +    // setterに関数を渡す場合、前回値が引数として使用できる
 +    setTodoItems(prev => [...prev, input]);
+
+     // 以下のようにしても動くが、前回のstateに基づいた変更の場合は上記の様に関数を使う方が良い
+     // const newArray = [...todoItems, input]
+     // setTodoItemst(newArray)
    };
 ```
 
@@ -279,19 +234,20 @@ useState に配列やオブジェクトを使用する場合、中の要素を�
 
 入力値を追加できる様になりました。
 
-・ここまでのコミット->`2875347cb9c132ffabab14ef8cd25bf75d0b8232`
+・ここまでのコミットに同期->`git reset --hard be80746019a470bfff31511801465eb92bace0c8`
 
 ** handson **
 
 1. ボタンをクリックして Todo リストに追加された時、入力した値が消えるようにしてください。
 2. Todo リストを全て削除するボタンを追加してください。
+3. 重複したTodoを設定できないようにしてください（重複している場合はalert）
 
 #### 4 TodoItem を別のコンポーネントにする
 
 リスト内の要素、`TodoItem`を別のコンポーネントにしておきます。  
 TodoItem 用のスタイル定義も行います。
 
-・ここまでのコミット->`95f5fcd4c58517d65f991bcdf54fee00b418b825`
+・ここまでのコミットに同期->`git reset --hard b00f627ef456a341a9c710360c9dbadec7c09643`
 
 #### 5 useEffect を使う
 
@@ -328,18 +284,33 @@ useEffect はコンポーネントの**レンダリングが完了した後**に
 // TodoList.tsx
 
 
-  useEffect(() => {
-    setMessage(`TODO LIST: ${todoItems.length}件`);
-  }, [todoItems.length]);
++  useEffect(() => {
++    setMessage(`TODO LIST: ${todoItems.length}件`);
++  }, []);
 ```
 
-クラスコンポーネントの
+`初期メッセージ`が`TODO LIST：0件`の表示に変わっていることが確認できます。  
+このままではTodoの件数が変化してもメッセージが変わりません。  
+useEffectの第二引数が空の配列になっているためです。
+TodoListの件数が変化した時にメッセージを変更するようにします。
+
+```
++  useEffect(() => {
++    setMessage(`TODO LIST: ${todoItems.length}件`);
+-  }, []);
++  }, [todoItems.length]);
+```
+
+これでTodoListの件数変化を表示することが出来ました。
+
+
+useEffectはクラスコンポーネントの
 
 - componentDidMount
 - componentDidUpdate
 - componentWillUnMount
 
-が一つにまとまったイメージです。
+といったライフサイクルメソッドが一つにまとまったイメージです。
 
 ここでは、Todo リストの件数が変更されていた場合にメッセージを変化させています。  
 一般的には Ajax 処理をはじめとした非同期処理や、副作用を伴う処理は useEffect で行われます。
@@ -347,7 +318,31 @@ useEffect はコンポーネントの**レンダリングが完了した後**に
 useEffect の cleanup に関しては、別のブランチ`react-todolist-sample_useeffect-cleanup`で例を挙げています。
 `git checkout -b react-todolist-sample_useeffect-cleanup origin/react-todolist-sample_useeffect-cleanup`
 
-・ここまでのコミット->`86e4f43010e809e2f53a182575b2c0864ac347d0`
+・ここまでのコミットに同期->`git reset --hard 35090cf38c505e463b64dca854fbba130856c141`
+
+#### 5-1.クリーンアップ無しのuseEffect
+
+useEffect の第一引数はコールバック関数ですが、この関数は必要なクリーンアップ関数を return させることができます。  
+このクリーンアップ関数は、このコンポーネントがアンマウントされる前、またはこの useEffect が次回実行される前に実行されます。  
+useEffect には非同期処理や副作用のある処理が入ってくるので、このクリーンアップを適切に行わないと無駄な処理が続いたり、メモリを食い潰したりします。
+
+この例では、`Timer`コンポーネントを追加しています。  
+このコンポーネントの概要は下記を実行しています。
+
+- 10 秒毎に NTP にリクエストし、現在時刻表示を更新
+
+`timer表示ボタン`で Timer コンポーネントの有り無しを切り替えられます。
+
+このコミット時点の`Timer`には、クリーンアップ関数が有りません。(useEffect 内で何も return していない)  
+そのため、`timer表示ボタン`で現在時刻表示を消しても、setInterval が動き続けてしまいます。  
+開発者ツールで console を表示し、`timer表示ボタン`を何度もクリックしてみると、`Timer`コンポーネントが表示された回数だけ NTP へのリクエストループが動き続ける様子がわかります。
+
+#### 5-2.useEffect のクリーンアップ
+
+`Timer`にクリーンアップを追加しました。  
+表示を切り替える毎に、クリーンアップ関数が実行され、不要になった setInterval を止めています。
+
+ここまでのコミットに同期-> `git reset --hard 304dc435445fe73cb8e05ce8d949e1cab2c95807`
 
 #### 6.useReducer を使う
 
