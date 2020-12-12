@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState } from "react";
-import todoReducer from "../reducers/TodoReducer";
+import todoReducer, { appendTodo, removeAllTodo, updateMessage } from "../reducers/TodoReducer";
 import Timer from "./Timer";
 import TodoItem from "./TodoItem";
 
@@ -14,7 +14,7 @@ const TodoList = () => {
   const [showTimer, setShowTimer] = useState(false);
 
   useEffect(() => {
-    dispatch({ type: "UPDATE_MESSAGE", message: `TODO LIST: ${todoState.todoItems.length}件` });
+    dispatch(updateMessage(`TODO LIST: ${todoState.todoItems.length}件`));
   }, [todoState.todoItems.length]);
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,11 +22,11 @@ const TodoList = () => {
   };
 
   const addTodo = () => {
-    dispatch({ type: "ADD_TODO", value: input });
+    dispatch(appendTodo(input));
   };
 
   const clearTodo = () => {
-    dispatch({ type: "CLEAR_TODO" });
+    dispatch(removeAllTodo());
   };
 
   const { message, todoItems } = todoState;
