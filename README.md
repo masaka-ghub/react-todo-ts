@@ -413,17 +413,79 @@ export default Timer;
 
 ここまでのコミットに同期-> `git reset --hard c2a334a1ff9af18bdb5778a8b1031c0d8f43e02a`
 
-### 6.useReducer を使う
+### 6.useReducer
 
-次は useReducer です。
+次は [useReducer](https://ja.reactjs.org/docs/hooks-reference.html#usereducer) です。  
+useState の代替で、状態を管理する hooks です。  
+useState に比べ、複雑な state を管理するのに向いています。
+
+- 参考
+  - https://ics.media/entry/200409/
+  - https://mktmkt.hatenablog.com/entry/2019/09/11/231814
+  - https://qiita.com/mpyw/items/a816c6380219b1d5a3bf
+  - https://github.com/reduxjs/redux/issues/653
+
+```TypeScript
+// useStsateでオブジェクトを管理
+const [state, setState] = useState(['initial value'])
+setState([...state, 'added_value'])
+
+// useReducerの場合
+const [state, dispatch] = useReducer(reducer, ['initial value'])
+// actionオブジェクトをdispatch関数に渡す
+dispatch({type: ADD, value: 'added_value' })
+```
+
 Redux で使用していたような Reducer を作成し、そこに繋げる hooks です。
 (Redux で使用していた Action,Reducer などほぼ使いまわせると思います)
 
-Redux とは異なり、useState 同様 useReducer を定義したコンポーネントに管理されます。useState より複雑な値を管理したい時に使用されます。
+#### 登場人物
 
-まず、これまで useState で管理し、セッターで変更していた state を useReducer 使用に変更してみます。
+- state: 管理対象の状態。
+- dispatch: action を受け取り、reducer を実行する関数。
+- Action: Reducer へ dispatch される`オブジェクト`。`type`と,
+  その他の変更のためのパラメータをもつ。`type`は必須。
+  - `{ type: 'ADD_TODO', value: 'new todo' }`
+- ActionCreator: 必要なパラメータで Action を生成する関数。
+  ```
+  function addTodo(value) {
+    return `{ type: 'ADD_TODO', value: value };
+  }
+  ```
+- Reducer: 状態を変更する関数。Action を受け取り、state を更新する。
 
-・ここまでのコミット->`3c53ab4f2867e738a8a9b51572583e434fa69da8`
+useState 同様 useReducer を定義したコンポーネントに管理されます。useState より複雑な値を管理したい時に使用されます。
+
+** hands on **
+これまで useState で管理し、セッターで変更していた state を useReducer 使用に変更してみます。
+
+[差分](https://github.com/masaka-ghub/react-todo-ts/commit/ace3ed58fda3437046e358d2e92d0e237fff5ee1)
+
+#### 1.Reducer を作成します。TODO に追加するアクションとメッセージを変更するアクションを処理するようにしています。
+
+[Reducer の作成](https://github.com/masaka-ghub/react-todo-ts/commit/ace3ed58fda3437046e358d2e92d0e237fff5ee1#diff-439b5a85b45978aee5f2a1535c1b62561d5d921fb236b2ae79d39d8c1ca1e8cd)
+
+#### 2.TodoList の useState を useReducer に変更します。
+
+todoItems と message を useReducer に変更します。
+
+[TodoList の編集](https://github.com/masaka-ghub/react-todo-ts/commit/ace3ed58fda3437046e358d2e92d0e237fff5ee1#diff-faf663d4dd497fd71dff9adbed49bf1f75c297ed67517dbd6a049f90b345b52e)
+
+・ここまでのコミットに同期->`git reset --hard 5a14e1d1c20fac12113468374f843fde89013882`
+
+#### 3.TodoList を全削除するボタンの追加
+
+useState の時やったことと同様のことを useReducer で行ってみます。  
+まず削除ボタンを追加します。
+
+```diff
+// TodoList.tsx
+
+      <button onClick={addTodo}>Todo追加</button>
++     <button onClick={clearTodo}>Todo全削除</button> {/* 削除ボタンを追加 */}
+```
+
+action・reducer を編集し、削除ボタンがクリックされた時に全削除の action が dispatch するようにしてみてください。
 
 ### 7.子コンポーネントから親コンポーネントの更新を行う
 
