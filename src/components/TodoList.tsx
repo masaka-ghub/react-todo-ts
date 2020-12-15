@@ -25,6 +25,10 @@ const TodoList = () => {
     dispatch({ type: "ADD_TODO", value: input });
   };
 
+  const clearTodo = () => {
+    dispatch({ type: "CLEAR_TODO" });
+  };
+
   const { message, todoItems } = todoState;
   return (
     <>
@@ -38,6 +42,7 @@ const TodoList = () => {
       </div>
       <input type="text" value={input} onChange={handleInput} />
       <button onClick={addTodo}>Todo追加</button>
+      <button onClick={clearTodo}>Todo全削除</button>
     </>
   );
 };
