@@ -37,7 +37,7 @@ const TodoList = () => {
       <p>{message}</p>
       <div className="list-container">
         {todoItems.map((item, i) => (
-          <TodoItem key={i} value={item} />
+          <TodoItem key={i} index={i} value={item} dispatch={dispatch} />
         ))}
       </div>
       <input type="text" value={input} onChange={handleInput} />
