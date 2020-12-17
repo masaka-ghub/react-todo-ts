@@ -411,7 +411,7 @@ export default Timer;
 
 表示を切り替える毎に、クリーンアップ関数が実行され、不要になった setInterval を止めています。
 
-ここまでのコミットに同期-> `git reset --hard c2a334a1ff9af18bdb5778a8b1031c0d8f43e02a`
+ここまでのコミットに同期-> `git reset --hard cbe8d97df08ee969a39953db74b01eb6b930c3ce`
 
 ### 6.useReducer
 
@@ -420,9 +420,9 @@ useState の代替で、状態を管理する hooks です。
 useState に比べ、複雑な state を管理するのに向いています。
 
 - 参考
+  - https://qiita.com/suzukenz/items/40afe717029c2f8f4a54
   - https://ics.media/entry/200409/
   - https://mktmkt.hatenablog.com/entry/2019/09/11/231814
-  - https://qiita.com/mpyw/items/a816c6380219b1d5a3bf
   - https://github.com/reduxjs/redux/issues/653
 
 ```TypeScript
@@ -442,36 +442,36 @@ Redux で使用していたような Reducer を作成し、そこに繋げる h
 #### 登場人物
 
 - state: 管理対象の状態。
-- dispatch: action を受け取り、reducer を実行する関数。
+- dispatch: action を受け取り、reducer を実行させる関数。
 - Action: Reducer へ dispatch される`オブジェクト`。`type`と,
   その他の変更のためのパラメータをもつ。`type`は必須。
   - `{ type: 'ADD_TODO', value: 'new todo' }`
 - ActionCreator: 必要なパラメータで Action を生成する関数。
   ```
   function addTodo(value) {
-    return `{ type: 'ADD_TODO', value: value };
+    return { type: 'ADD_TODO', value: value };
   }
   ```
-- Reducer: 状態を変更する関数。Action を受け取り、state を更新する。
+- Reducer: 状態を変更する関数。Action を受け取り、現在のstateを元に、Actionの内容を反映した新しいstateを返す。
 
 useState 同様 useReducer を定義したコンポーネントに管理されます。useState より複雑な値を管理したい時に使用されます。
 
-** hands on **
+** hands on **  
+
 これまで useState で管理し、セッターで変更していた state を useReducer 使用に変更してみます。
 
-[差分](https://github.com/masaka-ghub/react-todo-ts/commit/ace3ed58fda3437046e358d2e92d0e237fff5ee1)
+[差分](https://github.com/masaka-ghub/react-todo-ts/commit/3f2194f56f307d8dc4020da85b602531a079f81f)
 
 #### 1.Reducer を作成します。TODO に追加するアクションとメッセージを変更するアクションを処理するようにしています。
 
-[Reducer の作成](https://github.com/masaka-ghub/react-todo-ts/commit/ace3ed58fda3437046e358d2e92d0e237fff5ee1#diff-439b5a85b45978aee5f2a1535c1b62561d5d921fb236b2ae79d39d8c1ca1e8cd)
+- [Reducer の作成](https://github.com/masaka-ghub/react-todo-ts/commit/3f2194f56f307d8dc4020da85b602531a079f81f#diff-439b5a85b45978aee5f2a1535c1b62561d5d921fb236b2ae79d39d8c1ca1e8cd)
 
 #### 2.TodoList の useState を useReducer に変更します。
 
-todoItems と message を useReducer に変更します。
+- todoItems と message を useReducer に変更します。
+  - [TodoList の編集](https://github.com/masaka-ghub/react-todo-ts/commit/3f2194f56f307d8dc4020da85b602531a079f81f#diff-faf663d4dd497fd71dff9adbed49bf1f75c297ed67517dbd6a049f90b345b52e)
 
-[TodoList の編集](https://github.com/masaka-ghub/react-todo-ts/commit/ace3ed58fda3437046e358d2e92d0e237fff5ee1#diff-faf663d4dd497fd71dff9adbed49bf1f75c297ed67517dbd6a049f90b345b52e)
-
-・ここまでのコミットに同期->`git reset --hard 5a14e1d1c20fac12113468374f843fde89013882`
+・ここまでのコミットに同期->`git reset --hard 3f2194f56f307d8dc4020da85b602531a079f81f`
 
 #### 3.TodoList を全削除するボタンの追加
 
@@ -491,14 +491,20 @@ action・reducer を編集し、削除ボタンがクリックされた時に全
 
 [次のコミット](https://github.com/masaka-ghub/react-todo-ts/commit/785cf0e4c64c182b90f28bfafcf23286eb8d85db)では、Action を dispatch している部分を ActionCreator を使用するように変更しています。
 
-### 7.子コンポーネントから親コンポーネントの更新を行う
+### 7.子コンポーネントから親コンポーネントの状態更新を行う
 
-useReducer の続きになります。
-Reducer の処理要求(dispatch)を子コンポーネントに渡せば、子のコンポーネントからコンポーネントの更新が行えます。
+-useReducer の続き-  
 
-Todo それぞれに削除ボタンを追加してみます。
-TodoItem コンポーネントに削除ボタンを追加しますが、クリックされた時に TodoList から自信を削除するような挙動です。
-TodoList は親コンポーネントの useReducer によって管理されています。
+Reducer の処理要求(dispatch)を子コンポーネントに渡せば、子のコンポーネントから親コンポーネントで管理している状態の更新が行えるようになります。
+
+Todo それぞれに削除ボタンを追加し、個別に削除できるように変更してみます。
+
+TodoItem コンポーネントに削除ボタンを追加しますが、クリックされた時に 親コンポーネントで管理している TodoListから自信を削除するような挙動です。
+TodoList は親コンポーネントの useReducer によって管理されています。  
+useReducerのdispatch関数を子コンポーネントに渡します。
+
+- [全体の差分](https://github.com/masaka-ghub/react-todo-ts/commit/2b5d98d8c408e8563ed4db9eb5db894219ccf1ee)
+
 
 親コンポーネントから渡された Reducer への dispatch を使い、削除処理を実行しています。
 
@@ -669,7 +675,7 @@ const todoReducer = (state = initialState, action) => {
 
 ```
 
-TodoList 側では Redux を使用するために seSelector と useDispatch を追加します。
+TodoList 側では Redux を使用するために useSelector と useDispatch を追加します。
 useSelector で store の state を、useDispatch で store への dispatch 関数に繋ぎます。
 
 context を使用していた部分を置き換えて行きます。
