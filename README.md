@@ -452,11 +452,11 @@ Redux で使用していたような Reducer を作成し、そこに繋げる h
     return { type: 'ADD_TODO', value: value };
   }
   ```
-- Reducer: 状態を変更する関数。Action を受け取り、現在のstateを元に、Actionの内容を反映した新しいstateを返す。
+- Reducer: 状態を変更する関数。Action を受け取り、現在の state を元に、Action の内容を反映した新しい state を返す。
 
 useState 同様 useReducer を定義したコンポーネントに管理されます。useState より複雑な値を管理したい時に使用されます。
 
-** hands on **  
+** hands on **
 
 これまで useState で管理し、セッターで変更していた state を useReducer 使用に変更してみます。
 
@@ -493,18 +493,17 @@ action・reducer を編集し、削除ボタンがクリックされた時に全
 
 ### 7.子コンポーネントから親コンポーネントの状態更新を行う
 
--useReducer の続き-  
+-useReducer の続き-
 
 Reducer の処理要求(dispatch)を子コンポーネントに渡せば、子のコンポーネントから親コンポーネントで管理している状態の更新が行えるようになります。
 
 Todo それぞれに削除ボタンを追加し、個別に削除できるように変更してみます。
 
-TodoItem コンポーネントに削除ボタンを追加しますが、クリックされた時に 親コンポーネントで管理している TodoListから自信を削除するような挙動です。
+TodoItem コンポーネントに削除ボタンを追加しますが、クリックされた時に 親コンポーネントで管理している TodoList から自信を削除するような挙動です。
 TodoList は親コンポーネントの useReducer によって管理されています。  
-useReducerのdispatch関数を子コンポーネントに渡します。
+useReducer の dispatch 関数を子コンポーネントに渡します。
 
 - [全体の差分](https://github.com/masaka-ghub/react-todo-ts/commit/2b5d98d8c408e8563ed4db9eb5db894219ccf1ee)
-
 
 親コンポーネントから渡された Reducer への dispatch を使い、削除処理を実行しています。
 
@@ -516,52 +515,44 @@ useReducerのdispatch関数を子コンポーネントに渡します。
 これまでは親のコンポーネントが持っている state(TodoState)を子コンポーネントでも参照するため、props と言う形で子のコンポーネントに必要な state を渡していました。
 useContext を使用し、Redux の様に props を介さずに異なるコンポーネントから共通の値にアクセスできる様にします。
 
+#### App.tsx で context の作成
+
 まず、context を作成します。
 この context を export する事で、import したコンポーネントは共通的にこの context にアクセスできます。
 
 ```
-
-export const TodoContext = createContext();
-
+export const todoContext = createContext<Store>({} as Store);
 ```
 
 次に先ほど作成した TodoContext から provider を作成します。
-この **provider に渡す value が共通管理したい値です。**
+この **provider に渡す value が共通管理したい値です。**  
 この例では前回に引き続き、useReducer による state を使用していますが、管理したい値が単純であれば useState でも構いません。
 
-```
-
-const TodoListProvider = ({ children }) => {
-const [todoState, dispatch] = useReducer(todoReducer, { todoItems: [], messge: '', lastId: 1 });
-// const [value, setValue] = useState('') の様なシンプルな値などでも良い
-
-return <TodoContext.Provider value={{ todoState, dispatch }}>{children}</TodoContext.Provider>;
+```typescript
+const TodoListProvider: React.FC = ({ children }): JSX.Element => {
+  const [todoState, dispatch] = useReducer(todoReducer, { todoItems: [], message: "" });
+  return <todoContext.Provider value={{ todoState, dispatch }}>{children}</todoContext.Provider>;
 };
-
 ```
-
-※ここで出てくる children は React で用意されている[コンポジション](https://ja.reactjs.org/docs/composition-vs-inheritance.html)を利用しています。コンポーネントで囲まれた要素がそのまま入ってきます。
-
-上の例だと、このタグ`<TodoListProvier><div>何か</div></TodoListProvider>`がそのまま children として渡ってきます。
 
 作成した provider でこれまでの TodoList コンポーネントを囲ってあげます。
 
 ```
-
-      <TodoListProvider>
+    <TodoListProvider>
+      <div className="App">
         <TodoMessage />
         <TodoList />
-      </TodoListProvider>
-
+      </div>
+    </TodoListProvider>
 ```
 
 これで、TodoList 側から TodoContext にアクセスする準備ができました。
+
+#### コンポーネント側で context の利用
+
 TodoList 側から TodoContext にアクセスするために useContext を使用します。
 
 ```
-
-/_ TodoList _/
-
 // App で作成した context を使う
 const { todoState, dispatch } = useContext(TodoContext);
 
@@ -598,27 +589,27 @@ export default TodoMessage;
 
 これを、TodoComponent の外に出します。
 
-```
+```typescript
+// App.tsx
 
-/_ App.js _/
 function App() {
-return (
-
-<div className="App">
-<TodoListProvider>
-<TodoMessage />
-<TodoList />
-</TodoListProvider>
-</div>
-);
+  return (
+    <TodoListProvider>
+      <div className="App">
+        <TodoMessage />
+        <TodoList />
+      </div>
+    </TodoListProvider>
+  );
 }
-
 ```
 
-これで動かしてみると、これまで同様の動きを見せることと思います。
-state を context で管理することによって、異なるコンポーネントからアクセスできる様になりました。
+これで、`TODOLIST: xx件`と表示するメッセージ部分は TodoList のコンポーネントから分離され、別コンポーネントになりました。
 
-・ここまでのコミット->`7d6d6d7b1f4d9a341ab2ca39305875f44330c985`
+この状態で動かしてみると、これまで同様の動きを見せることと思います。  
+state を context で管理することによって、異なるコンポーネントから同じ状態にアクセスできる様になりました。
+
+・ここまでのコミットに同期 -> `git reset --hard 652f9a349c13b15e422d2262454e3fdcd72b3576`
 
 ### 9. Redux を使う
 
