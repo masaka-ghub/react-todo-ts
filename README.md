@@ -611,70 +611,66 @@ state を context で管理することによって、異なるコンポーネ�
 
 ・ここまでのコミットに同期 -> `git reset --hard 652f9a349c13b15e422d2262454e3fdcd72b3576`
 
-### 9. Redux を使う
+### 9. useSelector で Redux を使う
 
-useContext による state 管理を Redux に変更してみます。
-まず必要なライブラリを install します。
+useSelector を使い、Redux で状態管理をするよう変更してみます。  
+これまで特定のコンポーネント(TodoList)に useReducer で状態を管理させていましたが、これだと TodoList とその子のコンポーネントからのみ管理している状態にアクセスできます。  
+メッセージ表示の部分だけを別コンポーネントにして、TodoList の外に出してみます。  
+以下のようなイメージです。
+
+```
+App.tsx
+┣TodoList
+┗TodoMessage
+```
+
+この TodoList と TodoMessage の両コンポーネントから共通の状態にアクセスできるようにします。
+
+#### Redux のインストール
+
+Redux は React 本体には含まれていないので、まず必要なライブラリを install します。
 
 `yarn add redux react-redux`
+`yarn add -D @types/react-redux`
 
-必要なライブラリを追加したら、はじめに App.js を編集します。
-createContext で作成していた context を、createStore により作成した store に置き換えします。
-context ではなく store で
+#### Reducer に初期値を設定する
 
-```
+必要なライブラリを追加したら、はじめに TodoReducer を編集します。  
+redux の場合、state の初期値を設定します。
 
-## -export const TodoContext = createContext();
+[reducer の差分](https://github.com/masaka-ghub/react-todo-ts/compare/2b5d98d8c408e8563ed4db9eb5db894219ccf1ee...ef46bfe59f27efef27551f6b4c2fa0088ec61921#diff-439b5a85b45978aee5f2a1535c1b62561d5d921fb236b2ae79d39d8c1ca1e8cd)
 
--const TodoListProvider = ({ children }) => {
+他は useReducer で使用していた状態をそのまま使います。
 
-- const [todoState, dispatch] = useReducer(todoReducer, { todoItems: [], messge: '' });
-- return <TodoContext.Provider value={{ todoState, dispatch }}>{children}</TodoContext.Provider>;
-  -};
+#### グローバルな Redux Store を作成する
 
-+const store = createStore(todoReducer);
+App.tsx に以下の編集を行います。
 
-```
+- グローバルな Store を作成
+- TodoMessage コンポーネントを組み込む(あとで作ります)
+- react-redux.Provider で共通の状態にアクセスするコンポーネントを囲う
 
-続いて context.Provider で括っていた部分を、react-redux の Provider に変更します。
+[App.tsx の差分](https://github.com/masaka-ghub/react-todo-ts/compare/2b5d98d8c408e8563ed4db9eb5db894219ccf1ee...ef46bfe59f27efef27551f6b4c2fa0088ec61921#diff-26ad4b834941d9b19ebf9db8082bd202aaf72ea0ddea85f5a8a0cb3c729cc6f2)
 
-```
+#### TodoList から Redux に接続する
 
--      <TodoListProvider>
+App.tsx で作成した Redux Store に接続します。  
+useReducer で取得していた state, dispatch をそれぞれ変更します。
 
-*      <Provider store={store}>
-         <TodoMessage />
-         <TodoList />
+- state -> useSelector を使用して取得
+- dispatch -> useDispatch を使用して取得
 
--      </TodoListProvider>
+メッセージ更新の処理(useEffect)はメッセージを管理するコンポーネントに移動させるので、TodoList からは消してしまいます。
 
-*      </Provider>
+[TodoList の差分](https://github.com/masaka-ghub/react-todo-ts/compare/2b5d98d8c408e8563ed4db9eb5db894219ccf1ee...ef46bfe59f27efef27551f6b4c2fa0088ec61921#diff-faf663d4dd497fd71dff9adbed49bf1f75c297ed67517dbd6a049f90b345b52e)
 
-```
+#### メッセージコンポーネントを作成する
 
-これで Provider 以下のコンポーネントから共通の store にアクセスする準備ができました。
+次に、`TODOLIST: xx件`のメッセージを別のコンポーネントにします。
+`src/components/TodoMessage.tsx`を作成します。
 
-続いて reducer です。Redux を使用する場合は、state に初期値を与えます。
+[TodoMessage.tsx](https://github.com/masaka-ghub/react-todo-ts/compare/2b5d98d8c408e8563ed4db9eb5db894219ccf1ee...ef46bfe59f27efef27551f6b4c2fa0088ec61921#diff-e89e6a307e9a2ca3f7c69dc2bf6773e16141c1945114c5b3443c2bb7eee803ed)の作成
 
-```
-
-/_ TodoReducer.js _/
-const initialState = { todoItems: [], messge: '', lastId: 1 };
-
-const todoReducer = (state = initialState, action) => {
-...
-
-```
-
-TodoList 側では Redux を使用するために useSelector と useDispatch を追加します。
-useSelector で store の state を、useDispatch で store への dispatch 関数に繋ぎます。
-
-context を使用していた部分を置き換えて行きます。
-
-TodoMessage の方も同様に useSelector と useDispatch に変更します。
-
-ここまでのコミット->`b879411cf5e691c1bb42006bf0e41cdda4e1e76b`
-
-```
-
-```
+これで useReducer から Redux への置き換えが出来ました。  
+Reducer や Action などの概念はほぼそのまま使えます。  
+Hooks の利用により、Redux の導入は若干容易になりました。
