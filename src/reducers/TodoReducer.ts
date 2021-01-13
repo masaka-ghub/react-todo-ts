@@ -1,4 +1,3 @@
-import { Dispatch } from "react";
 export const appendTodo = (value: string) => {
   return { type: "APPEND_TODO" as const, value };
 };
@@ -15,11 +14,6 @@ export const removeTodo = (index: number) => {
   return { type: "REMOVE_TODO" as const, index };
 };
 
-export type Store = {
-  todoState: TodoState;
-  dispatch: Dispatch<TodoActions>;
-};
-
 export type TodoState = {
   todoItems: string[];
   message: string;
@@ -31,7 +25,9 @@ export type TodoActions =
   | ReturnType<typeof removeAllTodo>
   | ReturnType<typeof removeTodo>;
 
-const todoReducer: React.Reducer<TodoState, TodoActions> = (state, action) => {
+const initialState: TodoState = { todoItems: [], message: "" };
+
+const todoReducer = (state: TodoState = initialState, action: TodoActions) => {
   switch (action.type) {
     case "APPEND_TODO":
       return { ...state, todoItems: [...state.todoItems, action.value] };

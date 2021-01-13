@@ -1,15 +1,19 @@
-import React, { useContext, useEffect } from "react";
-import { todoContext } from "../App";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { TodoState } from "../reducers/TodoReducer";
 
 const TodoMessage = () => {
-  // Appで作成したcontextを使う
-  const { todoState, dispatch } = useContext(todoContext);
+  // useSelectorでtodoリストを参照する
+  const todoItems = useSelector((state: TodoState) => state.todoItems);
+  const message = useSelector((state: TodoState) => state.message);
+  // useDispatchでdispatch関数を取得する
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch({ type: "UPDATE_MESSAGE", message: `TODO LIST件数: ${todoState.todoItems.length}件` });
-  }, [todoState.todoItems.length]);
+    dispatch({ type: "UPDATE_MESSAGE", message: `TODO LIST: ${todoItems.length}件` });
+  }, [todoItems.length]);
 
-  return <p>{todoState.message}</p>;
+  return <p>{message}</p>;
 };
 
 export default TodoMessage;

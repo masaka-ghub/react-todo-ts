@@ -1,6 +1,6 @@
-import React, { useContext, useState } from "react";
-import { todoContext } from "../App";
-import { appendTodo, removeAllTodo } from "../reducers/TodoReducer";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { appendTodo, removeAllTodo, TodoState } from "../reducers/TodoReducer";
 import Timer from "./Timer";
 import TodoItem from "./TodoItem";
 
@@ -8,8 +8,11 @@ const TodoList = () => {
   // 入力されたテキストを管理
   const [input, setInput] = useState("");
 
-  // Appで作成したcontextを使う
-  const { todoState, dispatch } = useContext(todoContext);
+  // useSelectorでtodoリストを参照する
+  const todoItems = useSelector((state: TodoState) => state.todoItems);
+
+  // useDispatchでdispatch関数を取得する
+  const dispatch = useDispatch();
 
   // timerは初期表示offにしておく
   const [showTimer, setShowTimer] = useState(false);
@@ -26,7 +29,6 @@ const TodoList = () => {
     dispatch(removeAllTodo());
   };
 
-  const { message, todoItems } = todoState;
   return (
     <>
       <button onClick={() => setShowTimer(!showTimer)}>timer表示</button>
