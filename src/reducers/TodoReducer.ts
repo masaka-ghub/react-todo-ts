@@ -1,3 +1,4 @@
+import { Dispatch } from "react";
 export const appendTodo = (value: string) => {
   return { type: "APPEND_TODO" as const, value };
 };
@@ -12,6 +13,11 @@ export const removeAllTodo = () => {
 
 export const removeTodo = (index: number) => {
   return { type: "REMOVE_TODO" as const, index };
+};
+
+export type Store = {
+  todoState: TodoState;
+  dispatch: Dispatch<TodoActions>;
 };
 
 export type TodoState = {
