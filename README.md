@@ -507,7 +507,7 @@ useReducer の dispatch 関数を子コンポーネントに渡します。
 
 親コンポーネントから渡された Reducer への dispatch を使い、削除処理を実行しています。
 
-・ここまでのコミット->`6381e453ec5db80805a6f3be43a4206c68492e1a`
+・ここまでのコミットに同期->`git reset --hard a4fd4f07548cde5a79cf3e236648fd3d4b0cd222`
 
 ### 8.Context API と useContext の使用
 
@@ -612,6 +612,10 @@ state を context で管理することによって、異なるコンポーネ�
 ・ここまでのコミットに同期 -> `git reset --hard 652f9a349c13b15e422d2262454e3fdcd72b3576`
 
 ### 9. useSelector で Redux を使う
+<<<<<<< Updated upstream
+=======
+※8.を飛ばす場合は7.終了のコミットに同期してください -> `git reset --hard a4fd4f07548cde5a79cf3e236648fd3d4b0cd222`
+>>>>>>> Stashed changes
 
 useSelector を使い、Redux で状態管理をするよう変更してみます。  
 これまで特定のコンポーネント(TodoList)に useReducer で状態を管理させていましたが、これだと TodoList とその子のコンポーネントからのみ管理している状態にアクセスできます。  
@@ -636,7 +640,8 @@ Redux は React 本体には含まれていないので、まず必要なライ�
 #### Reducer に初期値を設定する
 
 必要なライブラリを追加したら、はじめに TodoReducer を編集します。  
-redux の場合、state の初期値を設定します。
+redux の場合、state の初期値を設定します。  
+(React.Reducerの型だとReduxと整合性が取れないようなので、パラメータに型を指定しています)
 
 [reducer の差分](https://github.com/masaka-ghub/react-todo-ts/compare/2b5d98d8c408e8563ed4db9eb5db894219ccf1ee...ef46bfe59f27efef27551f6b4c2fa0088ec61921#diff-439b5a85b45978aee5f2a1535c1b62561d5d921fb236b2ae79d39d8c1ca1e8cd)
 
