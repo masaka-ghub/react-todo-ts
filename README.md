@@ -612,10 +612,7 @@ state を context で管理することによって、異なるコンポーネ�
 ・ここまでのコミットに同期 -> `git reset --hard 652f9a349c13b15e422d2262454e3fdcd72b3576`
 
 ### 9. useSelector で Redux を使う
-<<<<<<< Updated upstream
-=======
 ※8.を飛ばす場合は7.終了のコミットに同期してください -> `git reset --hard a4fd4f07548cde5a79cf3e236648fd3d4b0cd222`
->>>>>>> Stashed changes
 
 useSelector を使い、Redux で状態管理をするよう変更してみます。  
 これまで特定のコンポーネント(TodoList)に useReducer で状態を管理させていましたが、これだと TodoList とその子のコンポーネントからのみ管理している状態にアクセスできます。  
