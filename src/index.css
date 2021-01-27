@@ -1,13 +1,20 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
-    "Droid Sans", "Helvetica Neue", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.wrapper {
+  width: 400px;
+  margin: auto;
 }
 
 .list-container {
@@ -16,7 +23,7 @@ code {
   margin: auto;
   border: solid 1px #000000;
   width: 300px;
-  height: 480px;
+  min-height: 480px;
   background-color: #fff;
 }
 
@@ -28,6 +35,22 @@ code {
   color: #2f4f4f;
 }
 
-.remove-todo-item {
+.button-area {
+  display: inline-block;
+  width: 55px;
+}
+
+.status-button-todo-item {
+  font-size: 11px;
   margin: 0px 5px;
+}
+
+.remove-todo-item {
+  float: right;
+  border: none;
+  font-size: 18px;
+}
+
+.todo-console > div {
+  margin: 5px auto;
 }

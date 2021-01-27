@@ -25,7 +25,7 @@ const TodoList = () => {
   };
 
   const addTodo = () => {
-    dispatch(appendTodo(input));
+    dispatch(appendTodo({isDone: false, value: input}));
     inputRef.current?.focus()
   };
 
@@ -40,7 +40,7 @@ const TodoList = () => {
       {showTimer && <Timer />}
       <div className="list-container">
         {todoItems.map((item, i) => (
-          <TodoItem key={i} index={i} value={item} dispatch={dispatch} />
+          <TodoItem key={i} index={i} isDone={item.isDone} value={item.value} dispatch={dispatch} />
         ))}
       </div>
       <input ref={inputRef} type="text" value={input} onChange={handleInput} />
