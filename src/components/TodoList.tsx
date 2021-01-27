@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { appendTodo, removeAllTodo, TodoState } from "../reducers/TodoReducer";
+import { Dispatch } from "redux";
+import { appendTodo, removeAllTodo, TodoActions, TodoState } from "../reducers/TodoReducer";
 import Timer from "./Timer";
 import TodoItem from "./TodoItem";
 
@@ -34,13 +35,18 @@ const TodoList = () => {
     inputRef.current?.focus()
   };
 
+  const loggingDispatch = (action: TodoActions) => {
+    console.log(action)
+    return dispatch(action)
+  }
+
   return (
     <>
       <button onClick={() => setShowTimer(!showTimer)}>timer表示</button>
       {showTimer && <Timer />}
       <div className="list-container">
         {todoItems.map((item, i) => (
-          <TodoItem key={i} index={i} isDone={item.isDone} value={item.value} dispatch={dispatch} />
+          <TodoItem key={i} index={i} isDone={item.isDone} value={item.value} dispatch={loggingDispatch} />
         ))}
       </div>
       <input ref={inputRef} type="text" value={input} onChange={handleInput} />
