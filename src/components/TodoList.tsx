@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { appendTodo, removeAllTodo, TodoState } from "../reducers/TodoReducer";
 import Timer from "./Timer";
@@ -7,6 +7,9 @@ import TodoItem from "./TodoItem";
 const TodoList = () => {
   // 入力されたテキストを管理
   const [input, setInput] = useState("");
+
+  // inputDOMへの参照用
+  const inputRef = useRef<HTMLInputElement>(null)
 
   // useSelectorでtodoリストを参照する
   const todoItems = useSelector((state: TodoState) => state.todoItems);
@@ -23,10 +26,12 @@ const TodoList = () => {
 
   const addTodo = () => {
     dispatch(appendTodo(input));
+    inputRef.current?.focus()
   };
 
   const clearTodo = () => {
     dispatch(removeAllTodo());
+    inputRef.current?.focus()
   };
 
   return (
@@ -38,7 +43,7 @@ const TodoList = () => {
           <TodoItem key={i} index={i} value={item} dispatch={dispatch} />
         ))}
       </div>
-      <input type="text" value={input} onChange={handleInput} />
+      <input ref={inputRef} type="text" value={input} onChange={handleInput} />
       <button onClick={addTodo}>Todo追加</button>
       <button onClick={clearTodo}>Todo全削除</button>
     </>
