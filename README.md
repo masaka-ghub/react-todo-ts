@@ -676,3 +676,30 @@ useReducer で取得していた state, dispatch をそれぞれ変更します�
 これで useReducer から Redux への置き換えが出来ました。  
 Reducer や Action などの概念はほぼそのまま使えます。  
 Hooks の利用により、Redux の導入は若干容易になりました。
+
+ここまでのコミットに同期→`git reset --hard ed7bf9140a8378bcfb426ac4061fede8df1cc128`
+
+----
+
+11. useRef / useMemo / useCallback
+
+### useRef
+
+[useRef](https://ja.reactjs.org/docs/hooks-reference.html#useref)は、任意の値を格納するために使用します。`.current`プロパティに保持されます。
+
+```typescript
+const ref = useRef("hoge")
+// ref.current = "hoge"
+```
+
+この値は自由に変更することができます。ただし、useStateなどと違い変更を監視されません。  
+言い換えれば、useStateなどで定義した変数を変更してしまうと、無駄な再描画が走ります。
+
+また、関数コンポーネントはクラスコンポーネントと違い、インスタンス変数を持てないのでその代わりに使用したりします。  
+画面描画する必要のない値を保持しておきたい場合などはuseRefを使う方が良いかもしれません。
+
+useRefには[DOMへの参照を保持する使い方](https://github.com/masaka-ghub/react-todo-ts/commit/65d42f50773a3281c11945b0467acf12ae0708d2)もあります。
+
+※TypescriptでuseRefによるDom参照を使う場合、nullで初期化する&使用時にnullチェックが必要そうです。DOMが必ず存在するとは限らないから？
+
+### useMemoとuseCallback
