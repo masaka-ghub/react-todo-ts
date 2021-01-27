@@ -1,4 +1,4 @@
-import React, { Dispatch } from "react";
+import React, { Dispatch, memo } from "react";
 import { removeTodo, TodoActions, done } from "../reducers/TodoReducer";
 
 type TodoItemProps = {
@@ -43,4 +43,4 @@ const TodoItem: React.FC<TodoItemProps> = ({
   );
 };
 
-export default TodoItem;
+export default memo(TodoItem);
