@@ -681,9 +681,9 @@ Hooks の利用により、Redux の導入は若干容易になりました。
 
 ----
 
-11. useRef / useMemo / useCallback
+10. useRef / React.memo / useMemo / useCallback
 
-### useRef
+### 10-1.useRef
 
 [useRef](https://ja.reactjs.org/docs/hooks-reference.html#useref)は、任意の値を格納するために使用します。`.current`プロパティに保持されます。
 
@@ -702,4 +702,79 @@ useRefには[DOMへの参照を保持する使い方](https://github.com/masaka-
 
 ※TypescriptでuseRefによるDom参照を使う場合、nullで初期化する&使用時にnullチェックが必要そうです。DOMが必ず存在するとは限らないから？
 
-### useMemoとuseCallback
+### 10-2.memo
+
+memo(React.memo)はコンポーネント再描画の判定に使用します。  
+不要な再描画を減らすことができます。
+
+通常、Reactでは親コンポーネントで管理する状態が変更されると、子のコンポーネントも再描画されます。
+
+※ChromeやFireFoxではReact Devloper Toolsで開発者ツールにReact用の機能が追加できます。  
+これを使うとコンポーネントの状態や再描画される様子が確認できます
+
+[このコミット](https://github.com/masaka-ghub/react-todo-ts/commit/c0b6ce3617b7d24d216bac9639c016f06e89fc65)ではtodoItemに完了ボタンを追加しています。  
+これで動かしてみます。  
+
+![image](https://user-images.githubusercontent.com/51968987/106016995-598ad900-6103-11eb-8ab8-73606061972d.png)
+
+a→b→cと、3つのTodoを追加すると毎回全てのTodoがレンダリングされています。  
+また、完了ボタンを押しても全てのTodoがレンダリングされています。
+
+[次のコミット](https://github.com/masaka-ghub/react-todo-ts/commit/28d8f1516352e8b3f6cbc76916d9c1844eac1ee8)ではTodoItemコンポーネントをReact.memoしています。  
+これにより、TodoItemの描画が必要なものだけに限定されました。  
+memoしたことにより、propsに変更の無いTodoItemは再描画されないようになりました。
+
+![image](https://user-images.githubusercontent.com/51968987/106018300-b6d35a00-6104-11eb-96c0-d01739f913f6.png)
+
+
+ここまでのコミットに同期→`git reset --hard 28d8f1516352e8b3f6cbc76916d9c1844eac1ee8`
+
+----
+
+### 10-3.useCallback
+
+useCallbackは関数を「メモ化」します。  
+
+```
+const memorizedFn = useCallback(
+  () => {
+    // 何か処理
+  },
+  [a, b] // ここに設定した値に変更がない場合はキャッシュされた関数を返す
+);
+```
+
+無名関数はコンポーネントがレンダリングされるごとに作成されるため、親→子に関数を渡している場合、親コンポーネントの再描画ごとに子コンポーネントも再描画されてしまいます。
+
+[このコミット]()では、Todoの追加ボタンに渡すアクションをコンポーネント内で定義した関数に変更しています。(何のアクションがディスパッチされたかログに出すようにした)
+
+これで動かしてみると・・
+
+![image](https://user-images.githubusercontent.com/51968987/106088580-97bae380-6169-11eb-8076-97849a4a70ae.png)
+
+前回memo化する前のような状態になってしまいました。  
+TodoListに追加されたため、親コンポーネントが再描画され、`loggingDispatch`関数が再作成されているためです。
+
+ここでuseCallBackを使用してみます。
+
+```
+
+```
+
+![image](https://user-images.githubusercontent.com/51968987/106088938-39423500-616a-11eb-8300-a64b42131e7a.png)
+
+無駄な再描画が無くなりました。
+
+
+useCallbackの二つ目の引数リスト(依存関係リスト)に指定した値を監視し、変更があった場合関数は新たに作成されます。  
+通常、この依存関係リストに指定される値は関数の処理内で使用されている変数です。  
+```
+const DummyComponent = (props) => {
+  const [var1, setVar1] = useState('');
+
+  const foo = useCallback(() => {
+    // props.barやvar1を使用した処理
+  }, [props.bar, var1])
+}
+```
+※今回の例ではdispatch関数を依存関係リストに入れていますが、本来dispatchは変更されることがないので入れる必要はないようです。

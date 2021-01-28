@@ -1,6 +1,5 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Dispatch } from "redux";
 import { appendTodo, removeAllTodo, TodoActions, TodoState } from "../reducers/TodoReducer";
 import Timer from "./Timer";
 import TodoItem from "./TodoItem";
@@ -35,10 +34,10 @@ const TodoList = () => {
     inputRef.current?.focus()
   };
 
-  const loggingDispatch = (action: TodoActions) => {
+  const loggingDispatch = useCallback((action: TodoActions) => {
     console.log(action)
     return dispatch(action)
-  }
+  }, [dispatch])
 
   return (
     <>
