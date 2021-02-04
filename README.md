@@ -698,9 +698,33 @@ const ref = useRef("hoge")
 また、関数コンポーネントはクラスコンポーネントと違い、インスタンス変数を持てないのでその代わりに使用したりします。  
 画面描画する必要のない値を保持しておきたい場合などはuseRefを使う方が良いかもしれません。
 
-useRefには[DOMへの参照を保持する使い方](https://github.com/masaka-ghub/react-todo-ts/commit/65d42f50773a3281c11945b0467acf12ae0708d2)もあります。
+- 例：値が更新された時に実行される`useEffect`で、前回値を保持しておく
+
+React[公式](https://ja.reactjs.org/docs/hooks-faq.html#how-to-get-the-previous-props-or-state)より
+```javascript
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  const prevCountRef = useRef();
+  useEffect(() => {
+    prevCountRef.current = count;
+  });
+  const prevCount = prevCountRef.current;
+
+  return <h1>Now: {count}, before: {prevCount}</h1>;
+}
+```
+
+useRefにはDOMへの参照を保持する使い方もあります。  
+
+**hands_on**
+・Todoが追加された時に、入力欄にフォーカスが行くようにする
+
+実装例は[このコミット](https://github.com/masaka-ghub/react-todo-ts/commit/65d42f50773a3281c11945b0467acf12ae0708d2)
 
 ※TypescriptでuseRefによるDom参照を使う場合、nullで初期化する&使用時にnullチェックが必要そうです。DOMが必ず存在するとは限らないから？
+
+ここまでのコミットに同期 -> `git reset --hard 65d42f50773a3281c11945b0467acf12ae0708d2`
 
 ### 10-2.memo
 
@@ -715,12 +739,18 @@ memo(React.memo)はコンポーネント再描画の判定に使用します。
 [このコミット](https://github.com/masaka-ghub/react-todo-ts/commit/c0b6ce3617b7d24d216bac9639c016f06e89fc65)ではtodoItemに完了ボタンを追加しています。  
 これで動かしてみます。  
 
+コミットに同期する->`git reset --hard c0b6ce3617b7d24d216bac9639c016f06e89fc65`
+
 ![image](https://user-images.githubusercontent.com/51968987/106016995-598ad900-6103-11eb-8ab8-73606061972d.png)
 
 a→b→cと、3つのTodoを追加すると毎回全てのTodoがレンダリングされています。  
 また、完了ボタンを押しても全てのTodoがレンダリングされています。
 
+---- 
 [次のコミット](https://github.com/masaka-ghub/react-todo-ts/commit/28d8f1516352e8b3f6cbc76916d9c1844eac1ee8)ではTodoItemコンポーネントをReact.memoしています。  
+
+コミットに同期する->`git reset --hard 28d8f1516352e8b3f6cbc76916d9c1844eac1ee8`
+
 これにより、TodoItemの描画が必要なものだけに限定されました。  
 memoしたことにより、propsに変更の無いTodoItemは再描画されないようになりました。
 
@@ -735,8 +765,9 @@ memoしたことにより、propsに変更の無いTodoItemは再描画されな
 
 useCallbackは関数を「メモ化」します。  
 
+[React公式](https://ja.reactjs.org/docs/hooks-reference.html#usecallback)
 ```
-const memorizedFn = useCallback(
+const memorizedCallback = useCallback(
   () => {
     // 何か処理
   },
@@ -744,9 +775,10 @@ const memorizedFn = useCallback(
 );
 ```
 
-無名関数はコンポーネントがレンダリングされるごとに作成されるため、親→子に関数を渡している場合、親コンポーネントの再描画ごとに子コンポーネントも再描画されてしまいます。
+関数はコンポーネントがレンダリングされるごとに作成されるため、親→子に関数を渡している場合、親コンポーネントの再描画ごとに子コンポーネントも再描画されてしまいます。
 
-[このコミット]()では、Todoの追加ボタンに渡すアクションをコンポーネント内で定義した関数に変更しています。(何のアクションがディスパッチされたかログに出すようにした)
+[このコミット](https://github.com/masaka-ghub/react-todo-ts/commit/dddfe3a4b564e4a194d86c221cf8ec3119bff8ad)では、Todoの追加ボタンに渡すアクションをコンポーネント内で定義した関数に変更しています。  
+何のアクションがディスパッチされたか、ログに出すような処理イメージです。
 
 これで動かしてみると・・
 
@@ -755,11 +787,15 @@ const memorizedFn = useCallback(
 前回memo化する前のような状態になってしまいました。  
 TodoListに追加されたため、親コンポーネントが再描画され、`loggingDispatch`関数が再作成されているためです。
 
-ここでuseCallBackを使用してみます。
+----
+**hands_on**
+- TodoItemに渡すdispatch関数をuseCallBackを使用したものに変更する
 
-```
+[実装例](https://github.com/masaka-ghub/react-todo-ts/commit/7d045cdbd4aa03cb11fa34780b9cf6e9ab7bb3a2)
 
-```
+----
+
+useCallbackを使用したものに変更すると・・
 
 ![image](https://user-images.githubusercontent.com/51968987/106088938-39423500-616a-11eb-8300-a64b42131e7a.png)
 
@@ -778,3 +814,29 @@ const DummyComponent = (props) => {
 }
 ```
 ※今回の例ではdispatch関数を依存関係リストに入れていますが、本来dispatchは変更されることがないので入れる必要はないようです。
+
+ここまでのコミットに同期->`git reset --hard 7d045cdbd4aa03cb11fa34780b9cf6e9ab7bb3a2`
+
+### 10-4.useMemo
+
+useMemoは値をメモ化します。  
+(useCallbackは**関数**をメモ化)
+
+[React公式](https://ja.reactjs.org/docs/hooks-reference.html#usememo)
+
+useCallbackの説明に`useCallback(fn, deps) は useMemo(() => fn, deps) と等価です。`と書いてある通り、何をメモ化するかだけの違いです。
+
+あまり使いどころは多く無いかもしれません。  
+重い処理の実行回数を減らす目的で使われたりします。
+
+```
+const [foo] = useState(0)
+const [bar] = useState(0)
+
+const result = useMemo(() => {
+  // fooを使用した処理の重い計算
+}, [foo])
+```
+
+このようにすると、fooが変更されたとき「のみ」再計算され、
+barが変更された時に計算を行わないようになります。
