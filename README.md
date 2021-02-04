@@ -717,8 +717,10 @@ function Counter() {
 
 useRefにはDOMへの参照を保持する使い方もあります。  
 
-**hands_on**
+----
+**hands_on**  
 ・Todoが追加された時に、入力欄にフォーカスが行くようにする
+----
 
 実装例は[このコミット](https://github.com/masaka-ghub/react-todo-ts/commit/65d42f50773a3281c11945b0467acf12ae0708d2)
 
@@ -788,7 +790,7 @@ const memorizedCallback = useCallback(
 TodoListに追加されたため、親コンポーネントが再描画され、`loggingDispatch`関数が再作成されているためです。
 
 ----
-**hands_on**
+**hands_on**  
 - TodoItemに渡すdispatch関数をuseCallBackを使用したものに変更する
 
 [実装例](https://github.com/masaka-ghub/react-todo-ts/commit/7d045cdbd4aa03cb11fa34780b9cf6e9ab7bb3a2)
