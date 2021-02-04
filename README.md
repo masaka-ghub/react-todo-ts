@@ -718,8 +718,10 @@ function Counter() {
 useRefにはDOMへの参照を保持する使い方もあります。  
 
 ----
+
 **hands_on**  
 ・Todoが追加された時に、入力欄にフォーカスが行くようにする
+
 ----
 
 実装例は[このコミット](https://github.com/masaka-ghub/react-todo-ts/commit/65d42f50773a3281c11945b0467acf12ae0708d2)
