@@ -18,8 +18,12 @@ export const done = (index: number) => {
   return { type: "DONE_TODO" as const, index };
 };
 
+export type TodoItem = {
+  isDone: boolean, value: string
+}
+
 export type TodoState = {
-  todoItems: { isDone: boolean, value: string }[];
+  todoItems: TodoItem[];
   message: string;
 };
 
