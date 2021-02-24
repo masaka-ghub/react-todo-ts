@@ -1,11 +1,14 @@
-import { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useCallback, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { TodoDatabase } from "../lib/TodoDatabase";
-import { setTodo } from "../reducers/TodoReducer";
+import { setTodo, TodoState } from "../reducers/TodoReducer";
 
 const db = new TodoDatabase();
 
 export const useTodoDataSource = () => {
+  // useSelectorでtodoリストを参照する
+  const todoItems = useSelector((state: TodoState) => state.todoItems);
+
   // useDispatchでdispatch関数を取得する
   const dispatch = useDispatch();
 
@@ -15,6 +18,11 @@ export const useTodoDataSource = () => {
     dispatch(setTodo(todoList.map(todo => todo.content)));
   }, [dispatch]);
 
+  // 最初にDBからTodoListを取得し、stateに反映する
+  useEffect(() => {
+    getAll();
+  }, [getAll]);
+
   const put = useCallback(
     async (todo: string) => {
       await db.bulkPut([todo]);
@@ -23,5 +31,5 @@ export const useTodoDataSource = () => {
     [getAll]
   );
 
-  return { put };
+  return { todoItems, put };
 };

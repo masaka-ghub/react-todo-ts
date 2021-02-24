@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useTodoDataSource } from "../hooks/UseTodoDataSource";
-import { removeAllTodo, TodoState } from "../reducers/TodoReducer";
+import { removeAllTodo } from "../reducers/TodoReducer";
 import Timer from "./Timer";
 import TodoItem from "./TodoItem";
 
@@ -9,11 +9,8 @@ const TodoList = () => {
   // 入力されたテキストを管理
   const [input, setInput] = useState("");
 
-  // カスタムフックからput関数を取得
-  const { put } = useTodoDataSource();
-
-  // useSelectorでtodoリストを参照する
-  const todoItems = useSelector((state: TodoState) => state.todoItems);
+  // カスタムフックからTODOリストと処理関数を取得
+  const { todoItems, put } = useTodoDataSource();
 
   // useDispatchでdispatch関数を取得する
   const dispatch = useDispatch();
