@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useTodoDataSource } from "../hooks/UseTodoDataSource";
-import { removeAllTodo } from "../reducers/TodoReducer";
 import Timer from "./Timer";
 import TodoItem from "./TodoItem";
 
@@ -10,7 +9,7 @@ const TodoList = () => {
   const [input, setInput] = useState("");
 
   // カスタムフックからTODOリストと処理関数を取得
-  const { todoItems, put } = useTodoDataSource();
+  const { todoItems, put, clear } = useTodoDataSource();
 
   // useDispatchでdispatch関数を取得する
   const dispatch = useDispatch();
@@ -26,22 +25,18 @@ const TodoList = () => {
     put(input);
   };
 
-  const clearTodo = () => {
-    dispatch(removeAllTodo());
-  };
-
   return (
     <>
       <button onClick={() => setShowTimer(!showTimer)}>timer表示</button>
       {showTimer && <Timer />}
       <div className="list-container">
         {todoItems.map((item, i) => (
-          <TodoItem key={i} index={i} value={item} dispatch={dispatch} />
+          <TodoItem key={i} index={i} value={item} />
         ))}
       </div>
       <input type="text" value={input} onChange={handleInput} />
       <button onClick={addTodo}>Todo追加</button>
-      <button onClick={clearTodo}>Todo全削除</button>
+      <button onClick={clear}>Todo全削除</button>
     </>
   );
 };

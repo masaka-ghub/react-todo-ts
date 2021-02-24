@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TodoDatabase } from "../lib/TodoDatabase";
-import { setTodo, TodoState } from "../reducers/TodoReducer";
+import { removeAllTodo, setTodo, TodoState } from "../reducers/TodoReducer";
 
 const db = new TodoDatabase();
 
@@ -31,5 +31,18 @@ export const useTodoDataSource = () => {
     [getAll]
   );
 
-  return { todoItems, put };
+  const clear = useCallback(async () => {
+    await db.deleteAll();
+    dispatch(removeAllTodo());
+  }, [dispatch]);
+
+  const remove = useCallback(
+    async (index: number) => {
+      await db.bulkDelete([index]);
+      getAll();
+    },
+    [getAll]
+  );
+
+  return { todoItems, put, clear, remove };
 };
