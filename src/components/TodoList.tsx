@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { TodoDatabase } from "../lib/TodoDatabase";
-import { removeAllTodo, setTodo, TodoState } from "../reducers/TodoReducer";
+import { useTodoDataSource } from "../hooks/UseTodoDataSource";
+import { removeAllTodo, TodoState } from "../reducers/TodoReducer";
 import Timer from "./Timer";
 import TodoItem from "./TodoItem";
 
@@ -9,13 +9,8 @@ const TodoList = () => {
   // 入力されたテキストを管理
   const [input, setInput] = useState("");
 
-  // TodoDatabase
-  const [db, setDb] = useState<TodoDatabase>();
-  useEffect(() => {
-    // 初期化時にDBインスタンスをセット
-    const db = new TodoDatabase();
-    setDb(db);
-  }, []);
+  // カスタムフックからput関数を取得
+  const { put } = useTodoDataSource();
 
   // useSelectorでtodoリストを参照する
   const todoItems = useSelector((state: TodoState) => state.todoItems);
@@ -30,11 +25,8 @@ const TodoList = () => {
     setInput(e.target.value);
   };
 
-  const addTodo = async () => {
-    await db?.bulkPut([input]);
-    const newTodoList = await db?.findAll();
-    const todoItems = newTodoList?.map(todo => todo.content);
-    if (todoItems) dispatch(setTodo(todoItems));
+  const addTodo = () => {
+    put(input);
   };
 
   const clearTodo = () => {
