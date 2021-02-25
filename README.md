@@ -844,3 +844,103 @@ const result = useMemo(() => {
 
 このようにすると、fooが変更されたとき「のみ」再計算され、
 barが変更された時に計算を行わないようになります。
+
+----
+
+### 11.カスタムフック
+
+これまでReact hooksを使用してきましたが、hooksは独自に作成することもできます。(カスタムフック)
+
+- https://ja.reactjs.org/docs/hooks-custom.html
+
+コンポーネントにデータ処理などのロジックを記述すると、どうしてもコンポーネントのコードが肥大化してしまい、テストもしづらくなります。  
+カスタムフックを利用することでコンポーネントからロジックを分離し、再利用可能にすることができます。  
+また、コンポーネントのコードを小さく、すっきりしたものにできます。  
+（考え方としては関数に切り出すのと同じ感じです）
+
+#### 11-1.カスタムフックと非同期処理
+
+もう一つのカスタムフックの利用シーンとして、非同期処理(APIの利用など)をカスタムフックに任せることもできます。  
+例えば、APIで取得したデータをReactにより画面表示する場合、
+
+- 1.APIへリクエスト
+- 2.レスポンスが返ってきたら結果をstateに反映させる
+- 3.コンポーネントを再描画し、画面に反映する
+
+という流れで処理が行われます。  
+これをコンポーネントに書く、となるとどうしてもコード量が多くなってしまいます。（実際にはこれ以外にもエラー処理やローディング状態の更新なども必要になってきます）
+
+Reduxを使う場合、こういった非同期処理はmiddlewareを使用して実現するのが一般的でした。[redux-thunkやredux-saga](https://medium.com/@aksudupa11/redux-sagas-714370b61692)などです。  
+
+コンポーネントではなくRedux側に非同期処理を任せるイメージです。  
+
+middlewareを使うにも使い方を学ぶコストがかかるので、ここではmiddlewareを使用せずにカスタムフック内に非同期処理を書く方法を学びます。
+
+- 参考
+  - https://qiita.com/Naturalclar/items/6157d0b031bbb00b3c73
+  - https://yo7.dev/articles/redux-async-hook
+
+#### 11-2. Indexed DBへの追加コードをコンポーネントに書く
+
+これまで作業していたTODOリストは追加したデータをどこにも保存していませんでした。  
+この[コミット](https://github.com/masaka-ghub/react-todo-ts/commit/61e13148ac3705105e71c045fc0d470aaa304629)では、[Indexed DB](https://developer.mozilla.org/ja/docs/Web/API/IndexedDB_API/Basic_Concepts_Behind_IndexedDB)を利用してTODOリストのデータソースを扱うクラスを追加しています。これを利用して、TODOリストのIndexed DBへの保存を行うよう変更してみます。  
+
+※customーhookブランチで作業します。
+
+```
+git fetch
+git checkout -b custom_hook origin/custom_hook
+git reset --hard 61e13148ac3705105e71c045fc0d470aaa304629
+yarn
+```
+
+ここではIndexed DBへの追加はDexieを使用して行います。
+
+まず、TODOリストへの追加時にIndexed DBに追加(put)するようにしてみましょう。  
+（bulkPutを使用していますが、1件putのメソッドを作ってもOK）
+
+[コミット：Indexed DBへのputを追加](https://github.com/masaka-ghub/react-todo-ts/commit/e47dd8594d28962df646128ce0465d4e954caf1d)
+
+TODOの追加処理が以下のようになりました。
+
+- DBへのput（非同期処理）を行う
+- putが終わるまで待ち、終わったら全件取得する（非同期処理）
+- 取得結果をdispatchし、TODOリストを更新する
+
+`addTodo`関数自体もasyncになっています。  
+
+ここまでのコミットに同期→`git reset --hard e47dd8594d28962df646128ce0465d4e954caf1d`
+
+#### 11-3.TODOの追加処理をカスタムフック化
+
+次に、Todoの追加処理をカスタムフックに移行します。
+
+[put処理をカスタムフック化](https://github.com/masaka-ghub/react-todo-ts/commit/71e870c18beb1f0feb1d825a4813cb0266ddb1ed)
+
+Todo追加のロジックがコンポーネントから分離されました。  
+またデータソースを管理していた`useState`も不要になり、コンポーネントはデータ管理の責務から解放されています。  
+
+この例ではIndexed DBに対する更新処理を非同期で行っていますが、API使用の場合も同様に行うことができます。  
+
+ここまでのコミットに同期→`git reset --hard 71e870c18beb1f0feb1d825a4813cb0266ddb1ed`
+
+#### 11-4.TODOリストの管理をカスタムフックに移行する
+
+次に、`useSelector`を使用して取得していたTODOリストもカスタムフックに管理させます。  
+せっかくIndexed DBに保存したので、初期表示処理も追加してしまいます。
+
+[todoItemsの管理をカスタムフックに移行する](https://github.com/masaka-ghub/react-todo-ts/commit/a7ee90274f251866f82d25b8ab2ecea5ac87f60f)
+
+このように、カスタムフックはreturnの値を自由に設定できます。
+
+ここまでのコミットに同期→`git reset --hard a7ee90274f251866f82d25b8ab2ecea5ac87f60f`
+
+#### hands on
+
+カスタムフックにTODOリスト管理をさせたところまでと同期させます。  
+`git reset --hard a7ee90274f251866f82d25b8ab2ecea5ac87f60f`
+
+以下を実施してみましょう。
+
+1. 全削除ボタンの処理もカスタムフックに移行させてください。
+1. 個別の削除処理もカスタムフックに移行させてください。
